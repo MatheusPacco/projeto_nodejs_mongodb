@@ -17,7 +17,13 @@
     // Mongoose
         //em breve
     // Public
-        app.use(express.static(path.join(__dirname + "public")))
+        // Porque essa linha deu errado?
+
+        //  app.use(express.static(path.join(__dirname + "public")))
+        // app.use(express.static(path.join( 'public/css')))
+        app.use(express.static(__dirname + '/public'))
+        console.log(__dirname);
+
 
 // Rotas
     // Rotas seservadas somente para ao prefixo admin
