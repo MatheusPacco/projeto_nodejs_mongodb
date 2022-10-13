@@ -2,11 +2,12 @@
     const express = require('express'); 
     const handlebars = require('express-handlebars'); 
     const app = express(); 
-    const admin = require("./routes/admin")
+    const admin = require("./routes/admin");
     const path = require('path'); 
     const { default: mongoose } = require('mongoose');
     const session = require("express-session")
     const flash = require("connect-flash"); 
+    const moment = require("moment"); 
 
     // const mongoose = require('mongoose'); 
 
@@ -35,6 +36,17 @@
     // Handlebars
         app.engine('handlebars', handlebars.engine({defaultLayout: 'main'})); 
         app.set('view engine', 'handlebars'); 
+
+        // app.use('handlebars', handlebars.engine({
+        //     defaultLayout: 'main',
+                // helpers:{
+                //     formatDate: (data) => {
+                //         return moment(data).format('DD/MM/YYYY')
+                //     }
+                // }
+        // })); 
+
+
     // Mongoose
         mongoose.connect('mongodb://localhost/blogapp').then(() => {
             console.log("Servidor Conectado!");
