@@ -3,7 +3,7 @@
 </h2>
 <hr>
 <a href="categorias/add">
-    <button class="btn btn-sucess">Nova Categorias </button>
+    <button class="btn btn-primary">Nova Categorias </button>
 </a>
 
 {{#each categorias}}
@@ -12,8 +12,16 @@
             <h4> {{nome}} </h4>
             <small> Slug: <strong> {{slug}} </strong> </small>
             <small>Data de Criação: <strong> {{data}} </strong> </small>
+            <br>
+            <a href="categorias/edit/{{_id}}"><button class="btn btn-primary mt-2 mb-2"> Editar Categoria </button></a>
+            
+            <form action="categorias/deletar/{{_id}}" method="post">
+                <button class="btn btn-danger"> Deletar Categoria </button>
+            </form>
         </div>
     </div>
 {{else}}
+
+    <h4> Nenhuma categoria registrada! </h4>
 
 {{/each}}
