@@ -3,9 +3,10 @@ const router = express.Router();
 
 // Importando os models para rotas
 const mongoose = require('mongoose'); 
-require("../models/Categoria")
-
-const Categoria = mongoose.model("categorias")
+require("../models/Categoria"); 
+const Categoria = mongoose.model("categorias"); 
+require("../models/Postagens"); 
+const Postagens = mongoose.model('postagens'); 
 
 // Importando funções
 const ValidandoForms = require('../models/funcoes/ValidandoForms'); 
@@ -71,7 +72,7 @@ router.get("/categorias/edit/:id", (req, res) => {
         console.log(err);
         req.flash('error_msg', 'Essa categoria não existe')
         res.redirect('/admin/categorias')
-    })
+    });
     // res.send(".pEntrou em Editar categorias" + reqarams.id);
 }); 
 
@@ -85,7 +86,7 @@ router.post("/categorias/edit/:id", (req, res) => {
     const erros = ValidandoForms({nome: update.nome, slug: update.slug}); 
 
     if(erros.length > 0){
-        res.render(`admin/editarcategoria`, {categoria: {nome: update.nome, slug: update.slug, _id: id}, erros: erros})
+        res.render(`admin/editarcategoria`, {categoria: {nome: update.nome, slug: update.slug, _id: id}, erros: erros});
     } else {
 
         Categoria.findByIdAndUpdate(id, update).then(()=>{
@@ -110,6 +111,20 @@ router.post("/categorias/deletar/:id", (req, res) => {
         req.flash('error_msg', "Não foi possível remover a categoria, tente novamente"); 
         res.redirect("/admin/categorias"); 
     })
-})
+}); 
+
+router.get("/postagens", (req, res) => {
+    res.render("admin/postagens"); 
+}); 
+
+router.get("/postagens/add", (req, res) => {
+    Categoria.find().lean().then((categorias) => {
+        res.render("admin/addpostagens", {categorias});
+    }).catch((err) => {
+        res.flash('error_msg', "Não foi possível gerar as categorias")
+        res.redirect("admin/postagens")
+    })
+
+});
 
 module.exports = router; 
