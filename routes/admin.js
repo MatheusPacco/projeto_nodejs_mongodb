@@ -127,8 +127,8 @@ router.get("/postagens", (req, res) => {
             postagens[key].categoria = categoria.nome; 
         }).catch(err => {
             console.log("Não foi possível recuperar a categoria" + err); 
-        })
-    }
+        }); 
+    }; 
 
     res.render("admin/postagens", {postagens: postagens}); 
 
@@ -143,7 +143,7 @@ router.get("/postagens/add", (req, res) => {
     }).catch((err) => {
         req.flash('error_msg', "Não foi possível gerar as categorias")
         res.redirect("/admin/postagens")
-    })
+    });
 });
 
 router.post("/postagens/nova", (req, res) => {
@@ -161,11 +161,21 @@ router.post("/postagens/nova", (req, res) => {
         res.redirect("/admin/postagens"); 
     }).catch((err) =>{  
         // res.flash('error_msg', 'Não foi possível salvar a postagem!');
-        req.flash('success_msg', 'Não foi possível salvar a Postagem!')
+        req.flash('error_msg', 'Não foi possível salvar a Postagem!')
         res.redirect("/admin/postagens"); 
-    })
-})
+    });
+}); 
 
+router.post("/postagens/deletar/:id" , (req, res) => {
+    const id = req.params.id;  
+    Postagens.findByIdAndDelete(id).then(() => {
+        req.flash('success_msg', 'Postagem deletada com sucesso!'); 
+        res.redirect("/admin/postagens")
+    }).catch((err) => {
+        req.flash('error_msg', 'Não foi possível deletar a postagem!'); 
+        res.redirect("/admin/postagens")
+    }) 
+}); 
 
 router
 module.exports = router; 
