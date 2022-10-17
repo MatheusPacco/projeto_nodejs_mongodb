@@ -113,18 +113,59 @@ router.post("/categorias/deletar/:id", (req, res) => {
     })
 }); 
 
+// ROTA DE POSTAGENS    
+
 router.get("/postagens", (req, res) => {
-    res.render("admin/postagens"); 
+    Postagens.find().lean().sort({data: 'desc'}).then((postagens) => {
+
+    // Substituindo o ID da categoria pelo seu respectivo NOME
+
+    for (const key in postagens) {  
+        let id_categoria = postagens[key].categoria;
+        
+        Categoria.findById(id_categoria).lean().then(categoria => {
+            postagens[key].categoria = categoria.nome; 
+        }).catch(err => {
+            console.log("Não foi possível recuperar a categoria" + err); 
+        })
+    }
+
+    res.render("admin/postagens", {postagens: postagens}); 
+
+    }).catch(err => {
+        res.send("Ocorreu um erro na lstagem" + err); 
+    }); 
 }); 
 
 router.get("/postagens/add", (req, res) => {
     Categoria.find().lean().then((categorias) => {
         res.render("admin/addpostagens", {categorias});
     }).catch((err) => {
-        res.flash('error_msg', "Não foi possível gerar as categorias")
-        res.redirect("admin/postagens")
+        req.flash('error_msg', "Não foi possível gerar as categorias")
+        res.redirect("/admin/postagens")
     })
-
 });
 
+router.post("/postagens/nova", (req, res) => {
+    
+    const postagem = {
+        titulo: req.body.titulo, 
+        slug: req.body.slug, 
+        descricao: req.body.descricao,
+        conteudo: req.body.conteudo,
+        categoria: req.body.categoria
+    }
+
+    new Postagens(postagem).save().then(() => {
+        req.flash('success_msg', 'Postagem salva com sucesso!')
+        res.redirect("/admin/postagens"); 
+    }).catch((err) =>{  
+        // res.flash('error_msg', 'Não foi possível salvar a postagem!');
+        req.flash('success_msg', 'Não foi possível salvar a Postagem!')
+        res.redirect("/admin/postagens"); 
+    })
+})
+
+
+router
 module.exports = router; 

@@ -1,7 +1,33 @@
 <h2>
     Lista de Postagens
 </h2>
+
 <hr>
+
+{{#each postagens}}
+    <div class="card mt-4">
+        <div class="card-body">
+            <h4> {{titulo}} </h4>
+            <p> <strong> Descrição: </strong> {{descricao}} </p>
+            <p> <strong> Conteúdo: </strong>  {{conteudo}} </p>
+            <small>  Categoria: <strong>  {{categoria}} </strong> </small>
+            <small> Slug: <strong> {{slug}} </strong> </small>
+            <small>Data de Criação: <strong> {{data}} </strong> </small>
+
+            <br>
+            
+            <a href="#"><button class="btn btn-primary mt-2 mb-2"> Editar Postagem </button></a>
+            
+            <form action="#" method="post">
+                <button class="btn btn-danger"> Deletar Postagem </button>
+            </form>
+        </div>
+    </div>
+{{else}}
+
+    <h4> Não existem postagens cadastradas ainda! </h4>
+{{/each}}
+
 <a href="postagens/add">
     <button class="btn btn-primary">Nova Postagem </button>
 </a>
