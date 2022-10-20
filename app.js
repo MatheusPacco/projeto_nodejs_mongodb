@@ -8,7 +8,9 @@
     const session = require("express-session")
     const flash = require("connect-flash"); 
     const moment = require("moment"); 
-
+    const Postagens = mongoose.model('postagens');
+    const Categorias = mongoose.model('categorias');
+    
     // const mongoose = require('mongoose'); 
 
 // Configurações 
@@ -63,7 +65,70 @@
         console.log(__dirname);
 
 
-// Rotas
+// Rotas principais
+    app.get("/", (req, res) => {
+        Postagens.find().lean().populate('categoria').sort({data: 'desc'}).then((postagens) => {
+            res.render('index', {postagens}); 
+        }).catch((err) => {
+            console.log("Não foi possível listar as postagens na Index" + err);
+            res.redirect("/404"); 
+        })
+    })
+
+    app.get("/postagens/:slug", (req, res) => {
+        Postagens.findOne({slug: req.params.slug}).lean().populate('categoria').then((post) => {
+            if(post){
+                console.log(post);
+                res.render('postagens/index', {post: post});
+            } else {
+                req.flash('error_msg', 'Essa postagem não existe');
+                res.redirect('/'); 
+            }
+        }).catch((err) => {
+            console.log(err);
+            req.flash('error_msg', 'Erro interno com a postagem');
+            res.redirect('/'); 
+        });
+    });
+
+    app.get("/categorias", (req, res) => {
+        Categorias.find().lean().sort({data: 'desc'}).then((categorias) => {
+            
+            res.render('categorias/index', {categorias}); 
+
+        }).catch((err) => {
+            console.log(err);
+            req.flash('error_msg', 'Não foi possível listar as categorias'); 
+            res.redirect('/'); 
+        });
+        
+    }); 
+
+    app.get("/categorias/:slug", (req, res) => {
+        const slug = req.params.slug; 
+        Categorias.findOne({slug: slug}).then((categoria) => {
+
+            if (categoria) {
+                Postagens.find({categoria: categoria._id}).populate('categoria').lean().sort({data: 'desc'}).then((postagens) => {
+                    res.render('categorias/postagens', {postagens, categoria}); 
+
+                }).catch((err) => {
+                    console.log(err);
+                    req.flash('error_msg', 'Erro interno, não foi possível listas as postagens dessa categoria!'); 
+                    res.redirect('/categorias'); 
+                }); 
+            } else {
+                req.flash('error_msg', 'Essa categoria não existe'); 
+                res.redirect('/categorias'); 
+            }
+        });
+    });
+
+    // Rota de erro
+    app.get("/404", (req, res) => {
+        res.send("De ruim... /404");
+    });
+
     // Rotas seservadas somente para ao prefixo admin
     app.use('/admin', admin); 
 

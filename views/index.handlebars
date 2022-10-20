@@ -1,0 +1,24 @@
+<div class="jumbotron">
+  <h1 class="display-4">Blog do Node!</h1>
+  <p class="lead">Aqui você encontrará as postagens mais recentes sobre desenvolvimento em JS</p>
+  <hr class="my-4">
+  <h3>
+    Postagens Recentes:
+  </h3>
+</div>
+
+{{#each postagens}}
+    <div class="card mb-3 mt-3">
+        <div class="card-body">
+            <h4> {{titulo}} </h4>
+            <p> <strong> Descrição: </strong> {{descricao}} </p>
+            <small>  Categoria: <strong>  {{categoria.nome}} </strong> </small>
+            <small> Slug: <strong> {{slug}} </strong> </small>
+            <small>Data de Criação: <strong> {{data}} </strong> </small>
+            <br>
+            <a href="/postagens/{{slug}}"> <button class="btn btn-primary mt-3"> Saiba Mais </button> </a>
+        </div>
+    </div>
+{{else}}
+    <p> Sem postagens no momento</p>
+{{/each}}
