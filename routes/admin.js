@@ -116,25 +116,29 @@ router.post("/categorias/deletar/:id", (req, res) => {
 // ROTA DE POSTAGENS    
 
 router.get("/postagens", (req, res) => {
-    Postagens.find().lean().sort({data: 'desc'}).then((postagens) => {
+
+    // Usando a TAG Populate do mongoose para associar dois campos no banco de dados!
+
+    Postagens.find().lean().populate('categoria').sort({data: 'desc'}).then((postagens) => {
+        res.render("admin/postagens", {postagens: postagens}); 
+    }).catch(err => {
+        req.flash('error_msg', 'Não foi possível listar as categorias');
+        res.redirect('/admin'); 
+    }); 
 
     // Substituindo o ID da categoria pelo seu respectivo NOME
 
-    for (const key in postagens) {  
-        let id_categoria = postagens[key].categoria;
+    // for (const key in postagens) {  
+    //     let id_categoria = postagens[key].categoria;
         
-        Categoria.findById(id_categoria).lean().then(categoria => {
-            postagens[key].categoria = categoria.nome; 
-        }).catch(err => {
-            console.log("Não foi possível recuperar a categoria" + err); 
-        }); 
-    }; 
+    //     Categoria.findById(id_categoria).lean().then(categoria => {
+    //         postagens[key].categoria = categoria.nome; 
+    //     }).catch(err => {
+    //         console.log("Não foi possível recuperar a categoria" + err); 
+    //     }); 
+    // }; 
 
-    res.render("admin/postagens", {postagens: postagens}); 
-
-    }).catch(err => {
-        res.send("Ocorreu um erro na lstagem" + err); 
-    }); 
+    
 }); 
 
 router.get("/postagens/add", (req, res) => {
@@ -157,11 +161,11 @@ router.post("/postagens/nova", (req, res) => {
     }
 
     new Postagens(postagem).save().then(() => {
-        req.flash('success_msg', 'Postagem salva com sucesso!')
+        req.flash('success_msg', 'Postagem salva com sucesso!');
         res.redirect("/admin/postagens"); 
     }).catch((err) =>{  
         // res.flash('error_msg', 'Não foi possível salvar a postagem!');
-        req.flash('error_msg', 'Não foi possível salvar a Postagem!')
+        req.flash('error_msg', 'Não foi possível salvar a Postagem!');
         res.redirect("/admin/postagens"); 
     });
 }); 
@@ -170,12 +174,62 @@ router.post("/postagens/deletar/:id" , (req, res) => {
     const id = req.params.id;  
     Postagens.findByIdAndDelete(id).then(() => {
         req.flash('success_msg', 'Postagem deletada com sucesso!'); 
-        res.redirect("/admin/postagens")
+        res.redirect("/admin/postagens");
     }).catch((err) => {
         req.flash('error_msg', 'Não foi possível deletar a postagem!'); 
-        res.redirect("/admin/postagens")
+        res.redirect("/admin/postagens");
     }) 
 }); 
 
-router
+router.get("/postagens/edit/:id", (req, res) => {
+    const id = req.params.id; 
+    Postagens.findById(id).lean().populate('categoria').then((postagem) => {
+
+        Categoria.find().lean().then(categorias => {
+            res.render("admin/editarpostagem", {postagem, categorias});    
+        }).catch((err) => {
+            console.log('Não foi possível encontrar as categorias para edição' + err);
+            req.flash('error_msg', 'Não foi possível encontrar as categorias para edição'); 
+            res.redirect("/admin/postagens"); 
+        }); 
+    })
+    .catch((err) => {
+        console.log("Não foi possível encontrar a postagem:" + err);
+        req.flash('error_msg', 'Não foi possível selecionar a Postagem para editar!'); 
+        res.redirect("/admin/postagens"); 
+    }); 
+
+    // Substituindo o id da categoria pelo respectivo nome feito manualmente 
+
+    // const id_categoria = postagem.categoria; 
+    // Categoria.findById(id_categoria).lean().then((categoria) => {
+    //     postagem.categoria = categoria.nome; 
+    // }).catch((err) => {
+    //     console.log('Não foi possível encontrar a categoria da postagem' + err);
+    //     req.flash('error_msg', 'Não foi possível encontrar a categoria da postagem'); 
+    //     res.redirect("/admin/postagens"); 
+    // }); 
+})
+
+router.post("/postagens/edit/:id", (req, res) => {
+    const id_postagem = req.params.id;
+    
+    const postagem_update = {
+        titulo: req.body.titulo, 
+        slug: req.body.slug, 
+        descricao: req.body.descricao,
+        conteudo: req.body.conteudo,
+        categoria: req.body.categoria
+    } 
+
+    Postagens.findByIdAndUpdate(id_postagem, postagem_update).then(() => {
+        req.flash('success_msg', "Postagem editada com sucesso!"); 
+        res.redirect("/admin/postagens");
+    }).catch((err) => {
+        console.log("Não foi possível realizar a edição da postagem" + err);
+        req.flash('error_msg', "Não foi possível editar a postagem!"); 
+        res.redirect(`/admin/postagens`); 
+    })
+}); 
+
 module.exports = router; 

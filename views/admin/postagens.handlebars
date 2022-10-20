@@ -10,13 +10,13 @@
             <h4> {{titulo}} </h4>
             <p> <strong> Descrição: </strong> {{descricao}} </p>
             <p> <strong> Conteúdo: </strong>  {{conteudo}} </p>
-            <small>  Categoria: <strong>  {{categoria}} </strong> </small>
+            <small>  Categoria: <strong>  {{categoria.nome}} </strong> </small>
             <small> Slug: <strong> {{slug}} </strong> </small>
             <small>Data de Criação: <strong> {{data}} </strong> </small>
 
             <br>
             
-            <a href="#"><button class="btn btn-primary mt-2 mb-2"> Editar Postagem </button></a>
+            <a href="/admin/postagens/edit/{{_id}}"><button class="btn btn-primary mt-2 mb-2"> Editar Postagem </button></a>
             
             <form action="/admin/postagens/deletar/{{_id}}" method="post">
                 <button class="btn btn-danger"> Deletar Postagem </button>

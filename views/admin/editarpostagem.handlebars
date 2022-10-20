@@ -1,0 +1,63 @@
+{{#each erros}}
+    <div class="alert alert-danger"> {{texto}}</div>
+{{else}}
+
+{{/each}}
+
+
+<h2> Editar Postagem </h2>
+<div class="card">
+    <div class="card-body">
+        <h5> {{postagem.titulo}} </h5>
+        <p> <strong> Descrição: </strong> {{postagem.descricao}} </p>
+        <p> <strong> Conteúdo: </strong>  {{postagem.conteudo}} </p>
+        <small>  Categoria: <strong>  {{postagem.categoria.nome}} </strong> </small>
+        <small> Slug: <strong> {{postagem.slug}} </strong> </small>
+        <small>Data de Criação: <strong> {{postagem.data}} </strong> </small>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-body">
+        <form action="/admin/postagens/edit/{{postagem._id}}" method="post">
+            <label for="titulo"> Título: </label>
+            <input type="text" id="titulo" name="titulo" class="form-control" 
+            minlength="2"
+            required
+            value="{{postagem.titulo}}"
+            > 
+            <label for="slug"> Slug: </label>
+            <input type="text" id="slug" name="slug" class="form-control" 
+            minlength="2"
+            required
+            value="{{postagem.slug}}"
+            > 
+            <label for="descricao"> Descrição: </label>
+            <input type="text" id="descricao" name="descricao" class="form-control" 
+            required 
+            minlength="2"
+            value="{{postagem.descricao}}"
+            >
+
+            <label for="conteudo"> Conteúdo: </label>
+            <textarea name="conteudo" id="conteudo" class="form-control" 
+            required
+            minlength="2"
+            >{{postagem.conteudo}}</textarea>
+            
+            <label for="categoria"> Categoria </label>
+            <select name="categoria" id="categoria" class="form-select" required>
+                
+                {{#each categorias}}
+                    <option value="{{_id}}">{{nome}}</option>
+
+                {{else}}
+
+                    <option value="0">Nenhuma categoria registrada</option>
+                {{/each}}
+            </select>
+            <button class="btn btn-success mt-4" type="submit"> Editar Postagem </button>        
+        </form>
+    </div>
+</div>
+

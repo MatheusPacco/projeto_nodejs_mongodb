@@ -6,3 +6,5 @@ A Biblioteca do Flash é utilizada para gerar variáveis de escopo global, em TO
 
 Validação de formulário via FRONT-END
 https://developer.mozilla.org/en-US/docs/Learn/Forms/Form_validation#constraining_the_length_of_your_entries
+
+Populate doc: https://mongoosejs.com/docs/populate.html#field-selection
