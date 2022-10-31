@@ -10,7 +10,7 @@
     const moment = require("moment"); 
     const Postagens = mongoose.model('postagens');
     const Categorias = mongoose.model('categorias');
-    
+    const usuario = require("./routes/usuario"); 
     // const mongoose = require('mongoose'); 
 
 // Configurações 
@@ -131,7 +131,7 @@
 
     // Rotas seservadas somente para ao prefixo admin
     app.use('/admin', admin); 
-
+    app.use('/usuarios', usuario); 
 // Outros
 const PORT = 8080; 
 app.listen(PORT, () => {
